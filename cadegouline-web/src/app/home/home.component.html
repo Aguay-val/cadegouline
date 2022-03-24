@@ -1,0 +1,20 @@
+<div class="container mt-4" >
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100' rel='stylesheet' type='text/css'>
+    <div class="player">
+        <div class="song">
+            <div class="artist">ARTISTE</div>
+            <div class="name">TITRE DE LA CHANSON</div>
+        </div>
+        <div class="playarea mt-2">
+            <div class="play" (click)="play()" #playDiv></div>
+            <div class="pause" (click)="pause()" #pauseDiv></div>
+        </div>
+        <div class="soundControl mt-4" (click)="soundControl()"></div>
+        <div *ngIf="showVolume" class="volume">
+            <mat-slider (change)="setVolume($event)" min="0" max="100" step="1" [value]="volume"></mat-slider>
+        </div>
+    </div>
+    <audio hidden #audioElement controls>
+        <source src="http://5.189.128.156:8001/cadegoulinedanslecornet" type="application/ogg">
+    </audio>
+</div>

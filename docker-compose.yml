@@ -1,0 +1,42 @@
+version: '3.3'
+
+services:
+
+  #Service #1 : definition of mysql database
+  db: 
+    image: mysql:latest
+    container_name: mysql-db
+    environment:
+        - MYSQL_ROOT_PASSWORD=spring
+    volumes:
+        - ./init.sql:/data/application/init.sql
+    ports:
+      - "3307:3306"
+  api:
+    build:
+      context: ./cadegouline
+    ports:
+     - 3333:3333
+    restart:
+      always
+    volumes:
+        - /medias:/medias
+
+    depends_on:                           #define dependencies of this app
+      - db                                #dependency name (which is defined with this name 'db' in this file earlier)
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/property?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: spring
+
+  front: 
+    build:
+      context: ./cadegouline-web
+    ports:
+      - 8080:8080
+    restart:
+      always
+    depends_on:
+      - api
+    
+

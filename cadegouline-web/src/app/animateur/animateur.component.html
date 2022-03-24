@@ -1,0 +1,49 @@
+<div class="container">
+    <div class="row mt-4 text-center">
+        <h1>Ajouter un morceau</h1>
+    </div>
+    <div class="row">
+        <form id="form" [formGroup]="trackForm" (submit)="onSubmit()">
+            <div class="form-group">
+                <div class="row mt-4" >
+                    <label for="title">
+                        Titre
+                    </label>
+                    <input type="text" id="title" class="form-control" name="title" formControlName="title">
+                </div>
+                <div class="row mt-4">
+                    <label for="artist">
+                        Artiste
+                    </label>
+                    <input type="text" id="artist" class="form-control" name="artist" formControlName="artist">
+                </div>
+                <div class="row mt-4">
+                    <label for="album">
+                        Album
+                    </label>
+                    <input type="text" id="album" class="form-control" name="album" formControlName="album">
+                </div>
+                <div class="row mt-4">
+                    <label for="old_or_new">
+                        Ancien ou nouveau ?
+                    </label>
+                    <select id="old_or_new" class="form-control" name="old_or_new" formControlName="old_or_new">
+                        <option selected value="old" >Ancien</option>
+                        <option value="new">Nouveau</option>
+                    </select>
+                </div>
+
+                <div class="row mt-4">
+                    <label for="file">
+                        Fichier MP3
+                    </label>
+                    <input id="file" type="file" accept="audio/mp3" name="file" formControlName="file" (change)="onFileSelected($event)">
+                </div>
+
+                <div class="row mt-4">
+                    <button [disabled]="!trackForm.valid" type="submit" class="btn btn-primary">Envoyer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
