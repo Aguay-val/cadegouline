@@ -20,7 +20,7 @@ export class AnimateurService {
         const formData = new FormData();
         formData.append("fileTrack", file);
         formData.append("track", track);
-        this.httpClient.post<any>('http://localhost:3333/api/v1/track/insert', formData, httpOptions).subscribe(
+        this.httpClient.post<string>('http://localhost:3333/api/v1/track/insert', formData, httpOptions).subscribe(
             () => {
 
             },
