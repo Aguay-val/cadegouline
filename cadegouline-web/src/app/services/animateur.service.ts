@@ -20,12 +20,22 @@ export class AnimateurService {
         const formData = new FormData();
         formData.append("fileTrack", file);
         formData.append("track", track);
-        this.httpClient.post<string>('http://localhost:3333/api/v1/track/insert', formData, httpOptions).subscribe(
+        var environement = window.location.hostname
+
+        if (environement == "localhost"){
+            environement = "://" + environement + ":3333";
+        }
+        else {
+            environement = "s://" + environement
+        }
+
+        const url = "http" + environement + "/api/v1/track/insert"
+        console.log(url);
+        this.httpClient.post<string>(url, formData, httpOptions).subscribe(
             () => {
 
             },
             (error) => {
-                console.log(error)
                 if (error.status == 200) {
                     this.toastr.success("Le fichier a bien été enregistré ! ", "Succès !");
                 } else {
