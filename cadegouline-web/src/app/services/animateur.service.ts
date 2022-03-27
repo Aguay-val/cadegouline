@@ -26,7 +26,7 @@ export class AnimateurService {
             environement = "://" + environement + ":3333";
         }
         else {
-            environement = "s://" + environement
+            environement = "s://" + environement + ":3333";
         }
 
         const url = "http" + environement + "/api/v1/track/insert"
