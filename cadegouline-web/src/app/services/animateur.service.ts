@@ -20,16 +20,9 @@ export class AnimateurService {
         const formData = new FormData();
         formData.append("fileTrack", file);
         formData.append("track", track);
-        var environement = window.location.hostname
-
-        if (environement == "localhost"){
-            environement = "://" + environement + ":3333";
-        }
-        else {
-            environement = "s://" + environement + ":3333";
-        }
-
-        const url = "http" + environement + "/api/v1/track/insert"
+        let environment = window.location.hostname
+        environment = "://" + environment + ":3333";
+        const url = "http" + environment + "/api/v1/track/insert"
         console.log(url);
         this.httpClient.post<string>(url, formData, httpOptions).subscribe(
             () => {
