@@ -26,7 +26,7 @@ public class TrackController {
     public TrackController(TrackService trackService) {
         this.trackService = trackService;
     }
-    @CrossOrigin(origins = "http://localhost:8080")
+    //@CrossOrigin(origins = "http://localhost:8080")
     @PostMapping(value="/insert")
     public ResponseEntity<String> insert(@RequestParam(value = "fileTrack") MultipartFile fileTrack, @RequestParam(value="track") String jsonTrack) throws IOException {
         Date now = new Date();
