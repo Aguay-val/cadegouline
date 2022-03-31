@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, FormGroupDirective, Validators} from "@angular/forms";
+import {FormControl, FormGroup,Validators} from "@angular/forms";
 import {AnimateurService} from "../services/animateur.service";
-import {Router, RouterModule} from "@angular/router";
 import {Track} from "../models/Track.model";
 
 @Component({
@@ -53,7 +52,7 @@ export class AnimateurComponent implements OnInit {
         const jsonTrack = JSON.stringify(this.track);
         this.animateurService.saveTrack(this.file, jsonTrack);
 
-        this.ngOnInit();
+        //this.ngOnInit();
 
     }
 
