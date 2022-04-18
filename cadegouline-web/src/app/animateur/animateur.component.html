@@ -9,7 +9,7 @@
                     <label for="title">
                         Titre
                     </label>
-                    <input type="text" id="title" class="form-control" name="title" formControlName="title">
+                    <input type="text" id="title" class="form-control" name="title" formControlName="title" [(ngModel)]="title">
                 </div>
                 <div class="row mt-4">
                     <label for="artist">
@@ -40,8 +40,12 @@
                     <input id="file" type="file" accept="audio/mp3" name="file" formControlName="file" (change)="onFileSelected($event)">
                 </div>
 
-                <div class="row mt-4">
-                    <button [disabled]="!trackForm.valid" type="submit" class="btn btn-primary">Envoyer</button>
+                <div class="row mt-4 align-middle">
+                    <button id="submit" class="text-center align-middle"
+                            [disabled]="!trackForm.valid && !animateurService.inProgress"
+                            type="submit" class="btn btn-primary">
+                        Envoyer
+                    </button>
                 </div>
             </div>
         </form>

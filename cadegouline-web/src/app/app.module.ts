@@ -11,22 +11,26 @@ import { HomeComponent } from './home/home.component';
 import { AnimateurService } from "./services/animateur.service";
 import { HttpClientModule } from "@angular/common/http";
 import { ToastrModule } from "ngx-toastr";
+import { ListetrackComponent } from './listetrack/listetrack.component';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 @NgModule({
   declarations: [
     AppComponent,
     AnimateurComponent,
-    HomeComponent
+    HomeComponent,
+    ListetrackComponent
   ],
-  imports: [
-      BrowserModule,
-      AppRoutingModule,
-      BrowserAnimationsModule,
-      MatSliderModule,
-      ReactiveFormsModule,
-      HttpClientModule,
-      ToastrModule.forRoot()
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MatSliderModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        ToastrModule.forRoot(),
+        MatProgressSpinnerModule
+    ],
   exports: [],
   providers: [
       AnimateurService
