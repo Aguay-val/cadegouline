@@ -3,7 +3,13 @@ package com.sevi.cadegouline.services;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import com.sevi.cadegouline.entities.Program;
 import com.sevi.cadegouline.entities.Track;
+import com.sevi.cadegouline.repositories.JingleRepository;
+import com.sevi.cadegouline.repositories.ProgramRepository;
+import com.sevi.cadegouline.repositories.TrackRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,109 +18,175 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
 @EnableScheduling
 public class PlaylistService {
-    /*
-    @Scheduled(cron="0 * * * * *", zone="Europe/Paris")
-    */
-    public List<Track> generatePlaylist() throws InvalidDataException, UnsupportedTagException, IOException {
-        int nbFiles = 0;
-        File baseDir = new File("C:\\Users\\sebas\\Documents\\workspace\\Sons_Phiphi");
-        File sqlFile = new File("C:\\Users\\sebas\\Documents\\workspace\\Sons_Phiphi\\insertTracks.sql");
-        String type;
-        StringBuilder sb = new StringBuilder();
-        StringBuilder subSb = new StringBuilder();
-        sb.append("insert into cadegouline.track (album, artist, counter, is_blocked, old_or_new, path_to_file, title) \n" +
-            "values ");
 
-        if (baseDir.isDirectory()) {
-            for (File subDir : baseDir.listFiles()) {
-                if (subDir.isDirectory()) {
-                    type = subDir.getName().substring(0, subDir.getName().indexOf('-'));
-                    for (File subSubDir : subDir.listFiles()) {
-                        if (subSubDir.isDirectory()) {
-                            for (File file : subSubDir.listFiles()) {
-                                nbFiles++;
-                                try {
-                                    if (!type.equals("Jingles")) {
-                                        Mp3File mp3File = new Mp3File(file);
-                                        subSb = new StringBuilder();
+    @Value("${spring.config.additional-location}")
+    private String fileDir;
 
-                                        if (mp3File.hasId3v1Tag()) {
-                                            subSb.append("(");
-                                            subSb.append("\"" + mp3File.getId3v1Tag().getAlbum().replace("'", "''").replace("\"", "\\\"") + "\"");
-                                            //System.out.print(mp3File.getId3v1Tag().getAlbum());
-                                            subSb.append(",");
-                                            //System.out.print(",");
-                                            subSb.append("\"" + mp3File.getId3v1Tag().getArtist().replace("'", "''").replace("\"", "\\\"") + "\"");
-                                            //System.out.print(mp3File.getId3v1Tag().getArtist());
-                                            subSb.append(",0, false");
-                                            oldOrNew(type, subSb, mp3File);
+    private final TrackRepository trackRepository;
+    private final JingleRepository jingleRepository;
+    private final ProgramRepository programRepository;
 
-                                            subSb.append("\"" + mp3File.getId3v1Tag().getTitle().replace("'", "''").replace("\"", "\\\"") + "\"");
-                                            //System.out.print(mp3File.getId3v1Tag().getTitle());
+    public PlaylistService(TrackRepository trackRepository, JingleRepository jingleRepository, ProgramRepository programRepository) {
+        this.trackRepository = trackRepository;
+        this.jingleRepository = jingleRepository;
+        this.programRepository = programRepository;
+    }
 
-                                            subSb.append("),\n");
-                                            //System.out.println("");
-                                        } else if (mp3File.hasId3v2Tag()){
-                                            subSb.append("(");
-                                            subSb.append("\"" + mp3File.getId3v2Tag().getAlbum().replace("'", "''").replace("\"", "\\\"") + "\"");
-                                            //System.out.print(mp3File.getId3v2Tag().getAlbum());
-                                            subSb.append(",");
-                                            //System.out.print(",");
-                                            subSb.append("\"" + mp3File.getId3v2Tag().getArtist().replace("'", "''").replace("\"", "\\\"") + "\"");
-                                            //System.out.print(mp3File.getId3v2Tag().getArtist());
-                                            subSb.append(",0, false");
+    //@Scheduled(cron="*/30 * * * * ?")
+    public void executePlaylist() throws InvalidDataException, UnsupportedTagException, IOException {
+        generatePlayList();
+    }
 
-                                            oldOrNew(type, subSb, mp3File);
+    @Scheduled(cron="0 0 19 * * ?", zone="Europe/Paris")
+    public void generatePlayList() throws InvalidDataException, UnsupportedTagException, IOException {
 
-                                            subSb.append("\"" + mp3File.getId3v2Tag().getTitle().replace("'", "''").replace("\"", "\\\"") + "\"");
-                                            //System.out.print(mp3File.getId3v2Tag().getTitle());
+        List<Long> allTracksAvailable = trackRepository.findAllIds();
+        List<String> playlistGenerated = new ArrayList<>();
 
-                                            //System.out.println("");
-                                            subSb.append("),\n");
-                                        }
-                                        if (!subSb.toString().contains("null,null") && (!subSb.toString().contains("(,"))) {
-                                            sb.append(subSb);
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
+        String pathProgram = getProgramOfTheDay();
+        playlistGenerated.add(pathProgram);
+
+        Mp3File programFile = new Mp3File(pathProgram);
+
+        Long counter = programFile.getLengthInMilliseconds();
+
+        int addJingle = -1;
+
+        int newPosition = 0;
+        List<String> positions;
+        //Tant que la playlist ne dure pas 24h
+        while (counter < 86400000 && allTracksAvailable.size() > 0) {
+            if (addJingle == 2) {
+                addJingle = 0;
+                playlistGenerated.add(chooseJingle());
+            } else {
+                addJingle++;
+            }
+
+            newPosition = (int) Math.floor(Math.random() * 3);
+            positions = new ArrayList<>();
+            if (newPosition == 0) {
+                positions.add("new");
+                positions.add("old");
+                positions.add("old");
+            } else if (newPosition == 1) {
+                positions.add("old");
+                positions.add("new");
+                positions.add("old");
+            } else {
+                positions.add("old");
+                positions.add("old");
+                positions.add("new");
+            }
+            try {
+                Pair<List<Track>, Long> choosen = chooseListTrack(positions, allTracksAvailable, counter);
+                for (Track track : choosen.getFirst()) {
+                    playlistGenerated.add(fileDir + track.getPathToFile());
+                    allTracksAvailable.remove(track.getId());
                 }
+                counter = choosen.getSecond();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                break;
             }
         }
-        System.out.println(sb);
-        /*
-        FileOutputStream outputStream = new FileOutputStream(sqlFile);
-        byte[] strToBytes = sb.toString().getBytes();
-        outputStream.write(strToBytes);
 
-        outputStream.close();
-        */
-
-        System.out.println(nbFiles);
-        return new ArrayList<>();
-    }
-
-    private void oldOrNew(String type, StringBuilder sb, Mp3File mp3File) {
-        if (type.equals("Anciens")) {
-            sb.append(",\"old\",");
-            sb.append("\"" + mp3File.getFilename().substring("C:\\Users\\sebas\\Documents\\workspace\\Sons_Phiphi\\Anciens-20211128T155248Z-001\\Anciens\\".length()).replace("'", "''").replace("\"", "\\\""));
-            sb.append("\",");
-            //System.out.print(",old,");
-        } else {
-            sb.append(",\"new\",");
-            sb.append("\"" + mp3File.getFilename().substring("C:\\Users\\sebas\\Documents\\workspace\\Sons_Phiphi\\Nouveautés-20210831T131157Z-003\\Nouveautés\\".length() ).replace("'", "''").replace("\"", "\\\""));
-            sb.append("\",");
-            //System.out.print(",new,");
+        System.out.println("counter = " + counter + "; alltrackavailable.size() = " + allTracksAvailable.size());
+        System.out.println("Track restants : ");
+        for(Long id : allTracksAvailable) {
+            Track current = trackRepository.getById(id);
+            System.out.println(current.getId() + "; " + current.getPathToFile() + " : " + current.getOldOrNew());
         }
 
+        StringBuilder sb = new StringBuilder();
+        for (String file : playlistGenerated) {
+            //on enleve l'extension ".mp3"
+            sb.append(file.substring(0, file.length() - 3 ));
+            //.. pour la remplacer par .ogg
+            sb.append("ogg");
+            sb.append("\n");
+        }
+
+        File playlistFile = new File(fileDir + "playlist.txt");
+        FileOutputStream outputStream = new FileOutputStream(playlistFile);
+        byte[] strToBytes = sb.toString().getBytes();
+        outputStream.write(strToBytes);
+        outputStream.close();
     }
+
+    private String getProgramOfTheDay() {
+
+        Date today = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+
+        int weekOfYear = calendar.get(Calendar.WEEK_OF_YEAR);
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+
+        if ((weekOfYear % 2 ) == 1) {
+            dayOfWeek += 7;
+        }
+
+        Program p = programRepository.findProgramOfTheDay(dayOfWeek - 1);
+        System.out.println(fileDir + p.getPathToFile());
+        return fileDir + p.getPathToFile();
+    }
+
+    private Pair<List<Track>, Long> chooseListTrack(List<String> positions, List<Long> idTrackList, Long counter) throws Exception {
+        List<Track> listTrack = new ArrayList<>();
+        Track currentTrack;
+        Mp3File currentFile;
+        for (String tag : positions) {
+            currentTrack = chooseTrack(tag, idTrackList) ;
+            listTrack.add(currentTrack);
+            currentFile = new Mp3File(fileDir + currentTrack.getPathToFile());
+            counter += currentFile.getLengthInMilliseconds();
+        }
+
+        return Pair.of(listTrack, counter) ;
+    }
+
+    private Track chooseTrack(String oldOrNew, List<Long> allTrackIds) throws Exception {
+
+        Boolean isOk = false;
+        Boolean impossibleToContinue = false;
+        Track track;
+
+        while (!isOk && !impossibleToContinue) {
+            impossibleToContinue = (trackRepository.countOld(allTrackIds) < 2) || (trackRepository.countNew(allTrackIds) < 1);
+
+            int position = (int) Math.floor(Math.random() * allTrackIds.size());
+            track = trackRepository.getById(allTrackIds.get(position));
+            try {
+                isOk = track.getOldOrNew().equals(oldOrNew);
+            } catch (Exception e){
+                isOk = false;
+            }
+
+            if (isOk){
+                System.out.println("Choose track : " + "id = " + track.getPathToFile()) ;
+                return track;
+            }
+        }
+
+        if (impossibleToContinue) {
+            throw new Exception("Pas assez de track");
+        }
+        return new Track();
+    }
+
+    private String chooseJingle() {
+        List<Long> jingleIds = jingleRepository.findAllIds();
+        int position = (int) Math.floor(Math.random() * jingleIds.size());
+        System.out.println("Jingle : " + fileDir + jingleRepository.getById(jingleIds.get(position)).getPathToFile());
+        return fileDir + jingleRepository.getById(jingleIds.get(position)).getPathToFile();
+    }
+
 }
