@@ -26,7 +26,7 @@ export class AnimateurService {
         console.log(url);
         this.httpClient.post<string>(url, formData, httpOptions).subscribe(
             () => {
-
+                this.toastr.success("Le fichier a bien été enregistré ! ", "Succès !");
             },
             (error) => {
                 if (error.status == 200) {
