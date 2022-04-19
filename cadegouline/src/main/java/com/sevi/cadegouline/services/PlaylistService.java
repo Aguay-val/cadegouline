@@ -28,7 +28,6 @@ public class PlaylistService {
 
     @Value("${spring.config.additional-location}")
     private String fileDir;
-
     private final TrackRepository trackRepository;
     private final JingleRepository jingleRepository;
     private final ProgramRepository programRepository;
@@ -100,10 +99,20 @@ public class PlaylistService {
 
         System.out.println("counter = " + counter + "; alltrackavailable.size() = " + allTracksAvailable.size());
         System.out.println("Track restants : ");
+        int countOld = 0;
+        int countNew = 0;
         for(Long id : allTracksAvailable) {
             Track current = trackRepository.getById(id);
-            System.out.println(current.getId() + "; " + current.getPathToFile() + " : " + current.getOldOrNew());
+            if (current.getOldOrNew().equals("old")) {
+                countOld++;
+            } else {
+                countNew++;
+            }
+
+            //System.out.println(current.getId() + "; " + current.getPathToFile() + " : " + current.getOldOrNew());
         }
+
+        System.out.println("Parmis les " + allTracksAvailable.size() + " musiques restantes, il reste " + countOld + " vieilles et " + countNew + " nouvelles");
 
         StringBuilder sb = new StringBuilder();
         for (String file : playlistGenerated) {
@@ -171,7 +180,9 @@ public class PlaylistService {
             }
 
             if (isOk){
-                System.out.println("Choose track : " + "id = " + track.getPathToFile()) ;
+                System.out.println("Choose track : " + "id = " + track.getId() + "; title = " + track.getPathToFile()) ;
+                track.setCounter(track.getCounter() + 1);
+                trackRepository.save(track);
                 return track;
             }
         }
@@ -179,6 +190,7 @@ public class PlaylistService {
         if (impossibleToContinue) {
             throw new Exception("Pas assez de track");
         }
+
         return new Track();
     }
 
