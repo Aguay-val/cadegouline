@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {FormControl, FormGroup,Validators} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AnimateurService} from "../services/animateur.service";
 import {Track} from "../models/Track.model";
-import {ThemePalette} from '@angular/material/core';
 
 @Component({
     selector: 'app-animateur',
@@ -11,14 +10,13 @@ import {ThemePalette} from '@angular/material/core';
 })
 export class AnimateurComponent implements OnInit {
 
-    title: string;
-    track: Track;
+    track: Track
     file: File;
     fileArray: Promise<ArrayBuffer>;
 
     trackForm: FormGroup;
 
-    constructor(public animateurService: AnimateurService) { }
+    constructor(private animateurService: AnimateurService) { }
 
     ngOnInit(): void {
         this.trackForm = new FormGroup({
@@ -51,9 +49,10 @@ export class AnimateurComponent implements OnInit {
             this.trackForm.value.old_or_new,
             this.file.name
         );
-        this.title = "";
         const jsonTrack = JSON.stringify(this.track);
         this.animateurService.saveTrack(this.file, jsonTrack);
+
+        this.ngOnInit();
 
     }
 

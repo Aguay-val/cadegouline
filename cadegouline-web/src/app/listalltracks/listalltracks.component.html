@@ -1,0 +1,55 @@
+<div class="mat-title text-center my-4">
+    Liste des musiques sur le serveur
+</div>
+<div class="mb-4 text-end" style="margin-right: 15%">
+    Pour ajouter un morceau, clique <a href="/animateur">ici</a> !
+</div>
+<div class="container my-2">
+    <table mat-table class="track-table mat-elevation-z8" [dataSource]="allTracks">
+
+        <ng-container matColumnDef="titre">
+            <th *matHeaderCellDef>Titre</th>
+            <td *matCellDef="let track">
+                <div class="mr-4">
+                    {{track.title}}
+                </div>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="album">
+            <th *matHeaderCellDef>Album</th>
+            <td *matCellDef="let track">
+                <div class="mr-4">
+                    {{track.album}}
+                </div>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="artist">
+            <th *matHeaderCellDef>Artiste</th>
+            <td *matCellDef="let track">
+                <div class="mr-4">
+                    {{track.artist}}
+                </div>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tag" >
+            <th *matHeaderCellDef>Tag</th>
+            <td *matCellDef="let track">
+                <div class="mr-4" *ngIf="track.old_or_new === 'old'">Ancien</div>
+                <div class="mr-4" *ngIf="track.old_or_new === 'new'">Nouveau</div>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fichier">
+            <th *matHeaderCellDef>Fichier</th>
+            <td *matCellDef="let track">{{track.path_to_file}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    </table>
+</div>

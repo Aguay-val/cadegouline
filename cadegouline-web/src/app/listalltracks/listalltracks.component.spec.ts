@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListetrackComponent } from './listetrack.component';
+import { ListalltracksComponent } from './listalltracks.component';
 
-describe('ListetrackComponent', () => {
-  let component: ListetrackComponent;
-  let fixture: ComponentFixture<ListetrackComponent>;
+describe('ListalltracksComponent', () => {
+  let component: ListalltracksComponent;
+  let fixture: ComponentFixture<ListalltracksComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ListetrackComponent ]
+      declarations: [ ListalltracksComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ListetrackComponent);
+    fixture = TestBed.createComponent(ListalltracksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

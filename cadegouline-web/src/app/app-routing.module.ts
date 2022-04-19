@@ -1,13 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {AnimateurComponent} from "./animateur/animateur.component";
-import {AppComponent} from "./app.component";
 import {HomeComponent} from "./home/home.component";
+import {ListalltracksComponent} from "./listalltracks/listalltracks.component";
 
 const routes: Routes = [
   {
     path: 'animateur',
     component: AnimateurComponent
+  },
+  {
+    path: 'listalltracks',
+    component: ListalltracksComponent
   },
   {
     path: '',
