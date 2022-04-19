@@ -181,7 +181,11 @@ public class PlaylistService {
 
             if (isOk){
                 System.out.println("Choose track : " + "id = " + track.getId() + "; title = " + track.getPathToFile()) ;
-                track.setCounter(track.getCounter() + 1);
+                if (track.getCounter() == null) {
+                    track.setCounter(1);
+                } else {
+                    track.setCounter(track.getCounter() + 1);
+                }
                 trackRepository.save(track);
                 return track;
             }
