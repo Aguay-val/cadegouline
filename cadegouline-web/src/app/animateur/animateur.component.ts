@@ -10,6 +10,7 @@ import {Track} from "../models/Track.model";
 })
 export class AnimateurComponent implements OnInit {
 
+    title: string;
     track: Track
     file: File;
     fileArray: Promise<ArrayBuffer>;
@@ -52,7 +53,8 @@ export class AnimateurComponent implements OnInit {
         const jsonTrack = JSON.stringify(this.track);
         this.animateurService.saveTrack(this.file, jsonTrack);
 
-        this.ngOnInit();
+        this.trackForm.value.title = "";
+        this.title = "";
 
     }
 
