@@ -41,6 +41,7 @@ public class TrackController {
         fileOutputStream.write(bytes);
         fileOutputStream.close();
 
+/*
         String command = "ffmpeg -i \"" + this.fileDir + track.getPathToFile() +
                 "\" -vn -acodec libvorbis \"" +
                 this.fileDir + track.getPathToFile().substring(0, track.getPathToFile().length()-3) +
@@ -49,7 +50,7 @@ public class TrackController {
 
         Runtime process = Runtime.getRuntime();
         process.exec(command);
-
+*/
         if (trackService.addTrack(track) != null) {
             return ResponseEntity.ok().body("OK");
         } else {

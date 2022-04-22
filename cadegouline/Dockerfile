@@ -1,7 +1,3 @@
-FROM debian
-RUN apt-get -y update
-RUN apt-get install -y ffmpeg
-
 FROM maven as apibuild
 
 COPY . /home/
