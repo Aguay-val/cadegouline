@@ -45,6 +45,7 @@ public class TrackController {
                 "\" -vn -acodec libvorbis \"" +
                 this.fileDir + track.getPathToFile().substring(0, track.getPathToFile().length()-3) +
                 "ogg\"";
+        System.out.println(command);
 
         Runtime process = Runtime.getRuntime();
         process.exec(command);
