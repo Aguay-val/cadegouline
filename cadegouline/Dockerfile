@@ -1,10 +1,11 @@
 FROM debian
 
-RUN sudo apt update
+RUN apt update
 
-RUN sudo apt install ffmpeg
+RUN apt install ffmpeg
 
 FROM maven as apibuild
+
 COPY . /home/
 
 WORKDIR /home
