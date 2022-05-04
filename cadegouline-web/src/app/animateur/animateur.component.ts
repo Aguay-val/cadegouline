@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AnimateurService} from "../services/animateur.service";
 import {Track} from "../models/Track.model";
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {ToastrService} from "ngx-toastr";
+
 
 @Component({
     selector: 'app-animateur',
@@ -17,7 +20,7 @@ export class AnimateurComponent implements OnInit {
 
     trackForm: FormGroup;
 
-    constructor(private animateurService: AnimateurService) { }
+    constructor(private animateurService: AnimateurService, private toastr: ToastrService) { }
 
     ngOnInit(): void {
         this.trackForm = new FormGroup({
@@ -51,11 +54,11 @@ export class AnimateurComponent implements OnInit {
             this.file.name
         );
         const jsonTrack = JSON.stringify(this.track);
-        this.animateurService.saveTrack(this.file, jsonTrack);
 
+        this.animateurService.saveTrack(this.file, jsonTrack);
         this.trackForm.value.title = "";
         this.title = "";
-
+        //this.trackForm.value.file = null;
     }
 
 }
