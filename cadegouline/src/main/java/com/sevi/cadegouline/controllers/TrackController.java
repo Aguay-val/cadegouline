@@ -50,16 +50,16 @@ public class TrackController {
         fileOutputStream.write(bytes);
         fileOutputStream.close();
 
-/*
+        /**
+        String command = "./convert_to_ogg.sh " + this.fileDir + track.getPathToFile();
         String command = "ffmpeg -i \"" + this.fileDir + track.getPathToFile() +
                 "\" -vn -acodec libvorbis \"" +
                 this.fileDir + track.getPathToFile().substring(0, track.getPathToFile().length()-3) +
                 "ogg\"";
         System.out.println(command);
-
         Runtime process = Runtime.getRuntime();
         process.exec(command);
-*/
+        */
         if (trackService.addTrack(track) != null) {
             HttpHeaders headers = new HttpHeaders();
 
