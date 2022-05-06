@@ -7,8 +7,7 @@ import java.io.IOException;
 
 @SpringBootApplication
 public class CadegoulineApplication {
-	public static void main(String[] args) throws IOException {
-		Runtime.getRuntime().exec("apt-get install ffmpeg");
+	public static void main(String[] args) {
 		SpringApplication.run(CadegoulineApplication.class, args);
 	}
 }
