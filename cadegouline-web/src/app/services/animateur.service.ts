@@ -10,14 +10,13 @@ export class AnimateurService {
     }
 
     saveTrack(file: File, track: string)  {
-        if (file.name.lastIndexOf(".mp3") == file.name.length - 4 ) {
+        if (file.name.toLowerCase().lastIndexOf(".mp3") == file.name.length - 4 ) {
             const formData = new FormData();
             formData.append("fileTrack", file);
             formData.append("track", track);
             let environment = window.location.hostname
             environment = "://" + environment + ":3333";
             const url = "http" + environment + "/api/v1/track/insert"
-            //console.log(url);
             this.httpClient.post(url, formData, {responseType: 'text'}).subscribe(
                 () => {
                     this.toastr.success("Le fichier a bien été enregistré ! ", "Succès !");
