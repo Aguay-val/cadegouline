@@ -9,6 +9,7 @@ import {
     MomentDateAdapter,
     MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from '@angular/material-moment-adapter';
+import {Subscription} from "rxjs";
 
 @Component({
     selector: 'app-emission',
@@ -32,10 +33,12 @@ export class EmissionComponent implements OnInit {
     fileArray: Promise<ArrayBuffer>;
     program: Program;
     picker: MatDatepickerModule;
+    programService: any;
 
-    constructor(private programService: ProgramService) { }
+    constructor(private service: ProgramService) { }
 
     ngOnInit(): void {
+        this.programService = this.service;
         this.programForm = new FormGroup({
             title: new FormControl(null, [
                 Validators.required
@@ -63,7 +66,7 @@ export class EmissionComponent implements OnInit {
         const jsonTrack = JSON.stringify(this.program);
 
         this.programService.saveProgram(this.file, jsonTrack);
-        this.programForm.value.title = "";
+        this.programForm.reset();
         this.title = "";
     }
 

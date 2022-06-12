@@ -44,13 +44,16 @@
                     <button id="submit" class="btn btn-primary text-center align-middle"
                             [disabled]="!trackForm.valid"
                             type="submit">
-                        Envoyer
+                        <span>{{animateurService.buttonLabel}}</span>
                     </button>
                 </div>
             </div>
         </form>
         <div>
-            Pour voir la liste de tous les fichiers déjà téléchargés, clique <a href="/listalltracks">ici</a>
+            Pour ajouter une emission, clique <a href="/emission">ici</a>
+        </div>
+        <div>
+            Pour voir la liste de tous les morceaux déjà téléchargés, clique <a href="/listalltracks">ici</a>
         </div>
     </div>
 </div>

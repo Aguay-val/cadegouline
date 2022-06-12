@@ -17,12 +17,13 @@ export class AnimateurComponent implements OnInit {
     track: Track
     file: File;
     fileArray: Promise<ArrayBuffer>;
-
     trackForm: FormGroup;
+    animateurService: any;
 
-    constructor(private animateurService: AnimateurService) { }
+    constructor(private service: AnimateurService) { }
 
     ngOnInit(): void {
+        this.animateurService = this.service;
         this.trackForm = new FormGroup({
             title: new FormControl(null, [
                 Validators.required
