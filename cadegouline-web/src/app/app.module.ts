@@ -16,13 +16,20 @@ import { ListalltracksComponent } from './listalltracks/listalltracks.component'
 import { ListAllTracksService } from "./services/list-all-tracks.service";
 import { RouterModule } from "@angular/router";
 import {MatTableModule} from "@angular/material/table";
+import { EmissionComponent } from './emission/emission.component';
+import {ProgramService} from "./services/program.service";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatNativeDateModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
     AppComponent,
     AnimateurComponent,
     HomeComponent,
-    ListalltracksComponent
+    ListalltracksComponent,
+    EmissionComponent
   ],
     imports: [
         BrowserModule,
@@ -34,12 +41,17 @@ import {MatTableModule} from "@angular/material/table";
         HttpClientModule,
         ToastrModule.forRoot(),
         MatProgressSpinnerModule,
-        MatTableModule
+        MatTableModule,
+        MatDatepickerModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatNativeDateModule
     ],
   exports: [],
   providers: [
       AnimateurService,
-      ListAllTracksService
+      ListAllTracksService,
+      ProgramService
   ],
   bootstrap: [AppComponent]
 })

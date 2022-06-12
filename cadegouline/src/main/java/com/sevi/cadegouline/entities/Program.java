@@ -1,5 +1,7 @@
 package com.sevi.cadegouline.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.time.Instant;
 
@@ -20,6 +22,7 @@ public class Program {
     private String title;
 
     @Column(name = "date_program", nullable = false)
+    @JsonProperty(value="date_program")
     private Instant dateProgram;
 
     public Instant getDateProgram() {

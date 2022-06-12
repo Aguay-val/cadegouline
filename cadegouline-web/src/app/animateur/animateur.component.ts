@@ -20,7 +20,7 @@ export class AnimateurComponent implements OnInit {
 
     trackForm: FormGroup;
 
-    constructor(private animateurService: AnimateurService, private toastr: ToastrService) { }
+    constructor(private animateurService: AnimateurService) { }
 
     ngOnInit(): void {
         this.trackForm = new FormGroup({
@@ -58,7 +58,6 @@ export class AnimateurComponent implements OnInit {
         this.animateurService.saveTrack(this.file, jsonTrack);
         this.trackForm.value.title = "";
         this.title = "";
-        //this.trackForm.value.file = null;
     }
 
 }

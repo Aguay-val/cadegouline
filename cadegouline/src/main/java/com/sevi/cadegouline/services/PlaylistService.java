@@ -8,6 +8,7 @@ import com.sevi.cadegouline.entities.Track;
 import com.sevi.cadegouline.repositories.JingleRepository;
 import com.sevi.cadegouline.repositories.ProgramRepository;
 import com.sevi.cadegouline.repositories.TrackRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,11 +36,13 @@ public class PlaylistService {
     private final JingleRepository jingleRepository;
     private final ProgramRepository programRepository;
 
+
     public PlaylistService(TrackRepository trackRepository, JingleRepository jingleRepository, ProgramRepository programRepository) {
         this.trackRepository = trackRepository;
         this.jingleRepository = jingleRepository;
         this.programRepository = programRepository;
     }
+
 
     //@Scheduled(cron="*/30 * * * * ?")
     public void executePlaylist() throws InvalidDataException, UnsupportedTagException, IOException {
@@ -109,10 +115,8 @@ public class PlaylistService {
                 countNew++;
             }
 
-            //System.out.println(current.getId() + "; " + current.getPathToFile() + " : " + current.getOldOrNew());
         }
 
-        System.out.println("Parmis les " + allTracksAvailable.size() + " musiques restantes, il reste " + countOld + " vieilles et " + countNew + " nouvelles");
 
         StringBuilder sb = new StringBuilder();
         for (String file : playlistGenerated) {
@@ -124,10 +128,19 @@ public class PlaylistService {
         }
 
         File playlistFile = new File(fileDir + "playlist.txt");
+        Date yesterday = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+        String yesterdayString = formatter.format(yesterday);
+
+        String archivePath = fileDir.replace("medias", "media");
+        archivePath += "playlist_" + yesterdayString + ".txt";
+        Files.copy(Path.of(playlistFile.getAbsolutePath()), Path.of(archivePath));
+
         FileOutputStream outputStream = new FileOutputStream(playlistFile);
         byte[] strToBytes = sb.toString().getBytes();
         outputStream.write(strToBytes);
         outputStream.close();
+
     }
 
     private String getProgramOfTheDay() {
@@ -155,8 +168,12 @@ public class PlaylistService {
         for (String tag : positions) {
             currentTrack = chooseTrack(tag, idTrackList) ;
             listTrack.add(currentTrack);
-            currentFile = new Mp3File(fileDir + currentTrack.getPathToFile());
-            counter += currentFile.getLengthInMilliseconds();
+            try {
+                currentFile = new Mp3File(fileDir + currentTrack.getPathToFile());
+                counter += currentFile.getLengthInMilliseconds();
+            } catch (Exception e ) {
+                System.out.println(e.getMessage() + " for " + currentTrack.getPathToFile());
+            }
         }
 
         return Pair.of(listTrack, counter) ;
@@ -180,7 +197,7 @@ public class PlaylistService {
             }
 
             if (isOk){
-                System.out.println("Choose track : " + "id = " + track.getId() + "; title = " + track.getPathToFile()) ;
+                //System.out.println("Choose track : " + "id = " + track.getId() + "; title = " + track.getPathToFile()) ;
                 if (track.getCounter() == null) {
                     track.setCounter(1);
                 } else {
@@ -201,7 +218,7 @@ public class PlaylistService {
     private String chooseJingle() {
         List<Long> jingleIds = jingleRepository.findAllIds();
         int position = (int) Math.floor(Math.random() * jingleIds.size());
-        System.out.println("Jingle : " + fileDir + jingleRepository.getById(jingleIds.get(position)).getPathToFile());
+        //System.out.println("Jingle : " + fileDir + jingleRepository.getById(jingleIds.get(position)).getPathToFile());
         return fileDir + jingleRepository.getById(jingleIds.get(position)).getPathToFile();
     }
 

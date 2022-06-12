@@ -1,0 +1,50 @@
+<div class="container">
+    <div class="row mt-4 text-center">
+        <h1>Ajouter un morceau</h1>
+    </div>
+    <div class="row">
+        <form id="form" [formGroup]="programForm" (submit)="onSubmit()">
+            <div class="form-group">
+                <div class="row mt-4" >
+                    <label for="title">
+                        Titre
+                    </label>
+                    <input type="text" id="title" class="form-control" name="title" formControlName="title" [(ngModel)]="title">
+                </div>
+
+                <div class="row mt-4" >
+                    <label for="title">
+                        Date de l'émisison
+                    </label>
+                    <mat-form-field appearance="fill">
+                        <input matInput [matDatepicker]="picker" formControlName="date">
+                        <mat-hint>JJ/MM/AAAA</mat-hint>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+
+
+                <div class="row mt-4">
+                    <label for="file">
+                        Fichier MP3
+                    </label>
+                    <input id="file" type="file" accept="audio/mp3" name="file" formControlName="file" (change)="onFileSelected($event)">
+                </div>
+
+                <div class="row mt-4 align-middle">
+                    <button id="submit" class="btn btn-primary text-center align-middle"
+                            [disabled]="!programForm.valid"
+                            type="submit">
+                        Envoyer
+                    </button>
+                </div>
+            </div>
+        </form>
+        <!--
+        <div>
+            Pour voir la liste de tous les fichiers déjà téléchargés, clique <a href="/listalltracks">ici</a>
+        </div>
+        -->
+    </div>
+</div>
